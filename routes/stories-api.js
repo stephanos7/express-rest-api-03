@@ -16,7 +16,7 @@ router.get('/stories', (req, res, next) => {
 });
 
 // get a single story
-router.get('/stories/:id', (req, res) => {
+router.get('/story/:id', (req, res) => {
   if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
     res.status(400).json({ message: 'Specified id is not valid' });
     return;
