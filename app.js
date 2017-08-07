@@ -8,9 +8,16 @@ var bodyParser = require('body-parser');
 // intiate routes
 var storiesApi = require('./routes/stories-api');
 
-// require configurations
+// require cors
+var cors = require('cors');
+
+// require db configurations
 require('./configs/database');
+
 var app = express();
+
+// enable cors
+app.use(cors());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
