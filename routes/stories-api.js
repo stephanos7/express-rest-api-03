@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var mongoose = require('mongoose')
 
 const Story = require('../models/story-model');
 
@@ -31,6 +32,25 @@ router.post('/stories', (req, res, next) => {
       id: newStory._id
     });
   });
+});
+
+// delete story
+router.delete('/stories/:id', (req, res) => {
+  if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res.status(400).json({ message: 'Specified id is not valid' });
+    return;
+  }
+  
+  Story.remove({ _id: req.params.id }, (err) => {
+    if (err) {
+      res.json(err);
+      return;
+    }
+
+    return res.json({
+      message: 'Story has been removed!'
+    });
+  })
 });
 
 module.exports = router;
