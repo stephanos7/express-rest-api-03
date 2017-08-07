@@ -6,7 +6,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 // intiate routes
-var index = require('./routes/index');
 var storiesApi = require('./routes/stories-api');
 
 // require configurations
@@ -25,7 +24,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // user routes
-app.use('/', index);
 app.use('/api', storiesApi);
 
 // catch 404 and forward to error handler

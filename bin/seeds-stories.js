@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 mongoose.connect("mongodb://localhost/project-write");
-const Story  = require("../models/story");
+const Story  = require("../models/story-model");
 
 const testData = [{
   

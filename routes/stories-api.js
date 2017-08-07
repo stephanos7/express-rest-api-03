@@ -16,8 +16,8 @@ router.get('/stories', (req, res, next) => {
 
 // post a new story
 router.post('/stories', (req, res, next) => {
-  const thePhone = new Story({
-
+  const newStory = new Story({
+    markdown: "### hello"
   });
 
   newStory.save((err) => {
