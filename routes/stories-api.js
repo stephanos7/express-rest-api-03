@@ -15,6 +15,23 @@ router.get('/stories', (req, res, next) => {
   });
 });
 
+// get a single story
+router.get('/stories/:id', (req, res) => {
+  if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res.status(400).json({ message: 'Specified id is not valid' });
+    return;
+  }
+  
+  Story.findById(req.params.id, (err, storyFound) => {
+      if (err) {
+        res.json(err);
+        return;
+      }
+
+      res.json(storyFound);
+    });
+});
+
 // post a new story
 router.post('/stories', (req, res, next) => {
   const newStory = new Story({
