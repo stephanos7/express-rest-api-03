@@ -16,7 +16,8 @@ router.get('/stories', (req, res, next) => {
 });
 
 // get a single story
-router.get('/story/:id', (req, res) => {
+router.get('/stories/:id', (req, res) => {
+  console.log(req.params.id);
   if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
     res.status(400).json({ message: 'Specified id is not valid' });
     return;
@@ -34,8 +35,9 @@ router.get('/story/:id', (req, res) => {
 
 // post a new story
 router.post('/stories', (req, res, next) => {
+  console.log(req.body.markdown);
   const newStory = new Story({
-    markdown: "### hello"
+    markdown: req.body.markdown
   });
 
   newStory.save((err) => {
