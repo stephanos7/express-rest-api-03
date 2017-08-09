@@ -76,8 +76,8 @@ router.post('/login', (req, res, next) => {
   });
 });
 
-router.get('/tools', passport.authenticate('jwt', { session: false }), (req, res) => {
-  res.json('Pong');
+router.get('/dashboard', passport.authenticate('jwt', { session: false }), (req, res) => {
+  res.json();
 });
 
 module.exports = router;
