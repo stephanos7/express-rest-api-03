@@ -5,8 +5,13 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+// auth dependencies
+const passport   = require('passport');
+const bcrypt     = require('bcrypt');
+
 // intiate routes
 var storiesApi = require('./routes/stories-api');
+var authRoutes = require('./routes/auth-routes');
 
 // require cors
 var cors = require('cors');
@@ -32,6 +37,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // user routes
 app.use('/api', storiesApi);
+app.use('/auth', authRoutes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
