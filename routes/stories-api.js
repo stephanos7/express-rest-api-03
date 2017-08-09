@@ -35,9 +35,9 @@ router.get('/stories/:id', (req, res) => {
 
 // post a new story
 router.post('/stories', (req, res, next) => {
-  console.log(req.body.markdown);
+  console.log(req.body.contents);
   const newStory = new Story({
-    markdown: req.body.markdown
+    contents: req.body.contents
   });
 
   newStory.save((err) => {
