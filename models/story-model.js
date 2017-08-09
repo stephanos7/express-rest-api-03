@@ -3,7 +3,7 @@
 const mongoose = require('mongoose');
 
 const storySchema = new mongoose.Schema({  
-  markdown: String,
+  contents: String,
   time : { type : Date, default: Date.now }
 });
 
