@@ -8,10 +8,16 @@ var bodyParser = require('body-parser');
 // auth dependencies
 const passport   = require('passport');
 const bcrypt     = require('bcrypt');
+const session    = require('express-session');
 
 // intiate routes
 var storiesApi = require('./routes/stories-api');
-var authRoutes = require('./routes/auth-routes');
+const authRoutes = require('./routes/auth-routes');
+
+// setup passport according to config
+const passportSetup = require('./configs/passport');
+passportSetup(passport);
+
 
 // require cors
 var cors = require('cors');
@@ -24,6 +30,19 @@ var app = express();
 // enable cors
 app.use(cors());
 
+// configure session
+app.use(session({
+  secret: 'angular auth passport secret shh',
+  resave: true,
+  saveUninitialized: true,
+  cookie : { httpOnly: true, maxAge: 2419200000 }
+}));
+
+// initialise auth modules
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -35,9 +54,15 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// user routes
+// api routes
 app.use('/api', storiesApi);
-app.use('/auth', authRoutes);
+// user routes
+app.use('/', authRoutes);
+
+// use fallback page
+app.use((req, res, next) => { 
+  res.sendfile(__dirname + '/public/index.html');  
+}); 
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

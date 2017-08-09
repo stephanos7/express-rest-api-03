@@ -108,3 +108,5 @@ authRoutes.get('/private', (req, res, next) => {
 
   res.status(403).json({ message: 'Unauthorized' });
 });
+
+module.exports = authRoutes;
