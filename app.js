@@ -32,14 +32,13 @@ app.use(cors());
 
 // configure session
 app.use(session({
-  secret: 'angular auth passport secret shh',
+  secret: 'Ir0nH4X',
   resave: true,
   saveUninitialized: true,
   cookie : { httpOnly: true, maxAge: 2419200000 }
 }));
 
 // initialise auth modules
-
 app.use(passport.initialize());
 app.use(passport.session());
 
