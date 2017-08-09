@@ -1,112 +1,83 @@
-// auth dependencies
-var express = require('express');
-const passport   = require('passport');
-const bcrypt     = require('bcrypt');
+const express = require('express');
+const router = express.Router();
 
-// Our user model
-const User       = require('../models/user-model');
+const passport = require('../configs/passport.js');
+const jwt = require('jsonwebtoken');
+const jwtOptions = require('../configs/jwt');
 
-const authRoutes = express.Router();
+const User = require('../models/user-model');
 
+const bcrypt = require('bcrypt');
+const bcryptSalt = 10;
 
-// SIGN UP USER 
-authRoutes.post('/signup', (req, res, next) => {
-  const username = req.body.username;
-  const password = req.body.password;
+router.post('/signup', (req, res, next) => {
+  let username = req.body.username;
+  let password = req.body.password;
 
-// check if both username and password are provided
   if (!username || !password) {
     res.status(400).json({ message: 'Provide username and password' });
     return;
   }
 
-// check if the provided username already exists in the db
   User.findOne({ username }, '_id', (err, foundUser) => {
     if (foundUser) {
       res.status(400).json({ message: 'The username already exists' });
       return;
     }
 
-    // encryption tools
-    const salt     = bcrypt.genSaltSync(10);
-    const hashPass = bcrypt.hashSync(password, salt);
+    let salt = bcrypt.genSaltSync(bcryptSalt);
+    let hashPass = bcrypt.hashSync(password, salt);
 
-    // create a new user based on the user schema
     const theUser = new User({
       username,
       password: hashPass
     });
 
-    // save new user in db
-    theUser.save((err) => {
+    theUser.save((err, user) => {
       if (err) {
-        res.status(400).json({ message: 'Something went wrong' });
-        return;
+        res.status(400).json({ message: err });
       }
+      else {
+        const payload = {id: user._id, user: user.username};
+        const token = jwt.sign(payload, jwtOptions.secretOrKey);
 
-      // log the user in
-      req.login(theUser, (err) => {
-        if (err) {
-          res.status(500).json({ message: 'Something went wrong' });
-          return;
-        }
-
-        res.status(200).json(req.user);
-      });
+        res.status(200).json({ token, user });
+      }
     });
   });
 });
 
-// LOG-IN
-authRoutes.post('/login', (req, res, next) => {
-  passport.authenticate('local', (err, theUser, failureDetails) => {
-    if (err) {
-      res.status(500).json({ message: 'Something went wrong' });
+router.post('/login', (req, res, next) => {
+  let username = req.body.username;
+  let password = req.body.password;
+
+  if (!username || !password) {
+    res.status(401).json({ message: 'Provide username and password' });
+    return;
+  }
+
+  User.findOne({'username': username}, (err, user) => {
+    if (!user) {
+      res.status(401).json({ message: 'The username or password is incorrect' });
       return;
     }
 
-    if (!theUser) {
-      res.status(401).json(failureDetails);
-      return;
-    }
-
-    req.login(theUser, (err) => {
-      if (err) {
-        res.status(500).json({ message: 'Something went wrong' });
-        return;
+    bcrypt.compare(password, user.password, (err, isMatch) => {
+      if (!isMatch) {
+        res.status(401).json({ message: 'The username or password is incorrect' });
       }
+      else {
+        const payload = {id: user._id, user: user.username};
+        const token = jwt.sign(payload, jwtOptions.secretOrKey);
 
-      // We are now logged in (notice req.user)
-      res.status(200).json(req.user);
+        res.status(200).json({ token, user });
+      }
     });
-  })(req, res, next);
+  });
 });
 
-// LOG-OUT
-authRoutes.post('/logout', (req, res, next) => {
-  req.logout();
-  res.status(200).json({ message: 'You have successfully logged-out' });
+router.get('/tools', passport.authenticate('jwt', { session: false }), (req, res) => {
+  res.json('Pong');
 });
 
-// AUTHENTICATED CHECK !!
-authRoutes.get('/loggedin', (req, res, next) => {
-  if (req.isAuthenticated()) {
-    res.status(200).json(req.user);
-    console.log("this is the authenticated user object: ", req.user);
-    return;
-  }
-
-  res.status(403).json({ message: 'Unauthorized' });
-});
-
-// PRIVATE ROUTE ONLY FOR LOGGED-IN USERS
-authRoutes.get('/private', (req, res, next) => {
-  if (req.isAuthenticated()) {
-    res.json({ message: 'This is a private message' });
-    return;
-  }
-
-  res.status(403).json({ message: 'Unauthorized' });
-});
-
-module.exports = authRoutes;
+module.exports = router;

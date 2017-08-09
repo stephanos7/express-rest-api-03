@@ -1,43 +1,20 @@
-const LocalStrategy = require('passport-local').Strategy;
-const User          = require('../models/story-model');
-const bcrypt        = require('bcrypt');
 
-module.exports = function (passport) {
+const passport = require('passport');
+const passportJwt = require('passport-jwt');
+const JwtStrategy = passportJwt.Strategy;
 
-  passport.use(new LocalStrategy((username, password, next) => {
-    User.findOne({ username }, (err, foundUser) => {
-      if (err) {
-        next(err);
-        return;
-      }
+const jwtOptions = require('./jwt');
+const User = require('../models/user-model');
 
-      if (!foundUser) {
-        next(null, false, { message: 'Incorrect Password or Username' });
-        return;
-      }
-
-      if (!bcrypt.compareSync(password, foundUser.password)) {
-        next(null, false, { message: 'Incorrect Password or Username' });
-        return;
-      }
-
-      next(null, foundUser);
-    });
-  }));
-
-  passport.serializeUser((loggedInUser, cb) => {
-    cb(null, loggedInUser._id);
+let strategy = new JwtStrategy(jwtOptions, (payload, done) => {
+  User.findById(payload.id, (err, user) => {
+    if (err) {
+      return done(err, false);
+    }
+    user ? done(null, user) : done(null, false);
   });
+});
 
-  passport.deserializeUser((userIdFromSession, cb) => {
-    User.findById(userIdFromSession, (err, userFound) => {
-      if (err) {
-        cb(err);
-        return;
-      }
+passport.use(strategy);
 
-      cb(null, userFound);
-    });
-  });
-
-}
+module.exports = passport;

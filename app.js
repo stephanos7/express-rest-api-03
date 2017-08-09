@@ -4,6 +4,7 @@ var path = require('path');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var cors = require('cors');
 
 // auth dependencies
 const passport   = require('passport');
@@ -12,35 +13,15 @@ const session    = require('express-session');
 
 // intiate routes
 var storiesApi = require('./routes/stories-api');
-const authRoutes = require('./routes/auth-routes');
-
-// setup passport according to config
-const passportSetup = require('./configs/passport');
-passportSetup(passport);
+var userAuth = require('./routes/auth-routes.js');
 
 
-// require cors
-var cors = require('cors');
-
-// require db configurations
+// database connection
 require('./configs/database');
 
 var app = express();
-
 // enable cors
 app.use(cors());
-
-// configure session
-app.use(session({
-  secret: 'Ir0nH4X',
-  resave: true,
-  saveUninitialized: true,
-  cookie : { httpOnly: true, maxAge: 2419200000 }
-}));
-
-// initialise auth modules
-app.use(passport.initialize());
-app.use(passport.session());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -53,10 +34,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// user auth routes
+app.use('/', userAuth);
 // api routes
-app.use('/api', storiesApi);
-// user routes
-app.use('/', authRoutes);
+app.use('/api', passport.authenticate('jwt', {session: false}), storiesApi);
 
 // use fallback page
 app.use((req, res, next) => { 
