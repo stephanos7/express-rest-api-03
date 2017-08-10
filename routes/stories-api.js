@@ -3,6 +3,7 @@ var router = express.Router();
 var mongoose = require('mongoose')
 
 const Story = require('../models/story-model');
+const User = require('../models/user-model');
 
 // get list of stories
 router.get('/stories', (req, res, next) => {
@@ -40,16 +41,13 @@ router.post('/stories', (req, res, next) => {
     contents: req.body.contents
   });
 
-  newStory.save((err) => {
+  newStory.save((err, savedStory) => {
     if (err) {
       res.json(err);
       return;
     }
 
-    res.json({
-      message: 'New story created!',
-      id: newStory._id
-    });
+    res.json(savedStory);
   });
 });
 
@@ -71,5 +69,6 @@ router.delete('/stories/:id', (req, res) => {
     });
   })
 });
+
 
 module.exports = router;

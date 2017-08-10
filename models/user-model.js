@@ -1,9 +1,11 @@
 const mongoose = require('mongoose');
 const Schema   = mongoose.Schema;
+const Story   = require('./story-model');
 
 const userSchema = new Schema({
   username: String,
-  password: String
+  password: String,
+  stories: [{ type: Schema.Types.ObjectId, ref: 'story'}]
 }, {
   timestamps: {
     createdAt: 'created_at',

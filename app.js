@@ -14,6 +14,8 @@ const session    = require('express-session');
 // intiate routes
 var storiesApi = require('./routes/stories-api');
 var userAuth = require('./routes/auth-routes.js');
+var usersApi = require('./routes/users-api.js');
+
 
 
 // database connection
@@ -38,6 +40,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', userAuth);
 // api routes
 app.use('/api', passport.authenticate('jwt', {session: false}), storiesApi);
+app.use('/api', passport.authenticate('jwt', {session: false}), usersApi);
+
 
 // use fallback page
 app.use((req, res, next) => { 
