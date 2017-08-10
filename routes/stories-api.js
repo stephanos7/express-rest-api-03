@@ -34,11 +34,29 @@ router.get('/stories/:id', (req, res) => {
     });
 });
 
+// get stories by a specific author
+router.get('/stories/author/:id', (req, res) => {
+  if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res.status(400).json({ message: 'Specified id is not valid' });
+    return;
+  }
+  
+  Story.find({"mainAuthor": req.params.id}, (err, storiesRetrieved) => {
+      if (err) {
+        res.json(err);
+        return;
+      }
+
+      res.json(storiesRetrieved);
+    });
+});
+
 // post a new story
 router.post('/stories', (req, res, next) => {
   console.log(req.body.contents);
   const newStory = new Story({
-    contents: req.body.contents
+    contents: req.body.contents,
+    mainAuthor: req.body.mainAuthor
   });
 
   newStory.save((err, savedStory) => {
