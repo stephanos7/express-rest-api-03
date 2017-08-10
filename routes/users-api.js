@@ -16,6 +16,24 @@ router.get('/users', (req, res, next) => {
   });
 });
 
+// get single user
+router.get('/users/:id', (req, res) => {
+  if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    res.status(400).json({ message: 'Specified id is not valid' });
+    return;
+  }
+  
+  User.findById(req.params.id, (err, userFound) => {
+      if (err) {
+        res.json(err);
+        return;
+      }
+
+      res.json(userFound);
+    });
+});
+
+
 // update user
 router.put('/users/:id', (req, res) => {
   if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
