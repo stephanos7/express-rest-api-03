@@ -1,4 +1,4 @@
-##Curated by HectorLS
+bluemix-auth.js
 
 # Dependency directories
 bower_components/
@@ -99,11 +99,13 @@ src/public/test/test_reports/
 
 
 # Environments
+
 .env                   ## dotenv environment variables file
 .venv
 env/
 venv/
 ENV/
+env.js
 
 
 # Numerous always-ignore extensions

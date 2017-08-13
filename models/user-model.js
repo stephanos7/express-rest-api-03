@@ -3,7 +3,7 @@ const Schema   = mongoose.Schema;
 const Story   = require('./story-model');
 
 const userSchema = new Schema({
-  username: String,
+  email: String,
   password: String,
   stories: [{ type: Schema.Types.ObjectId, ref: 'story'}]
 }, {
