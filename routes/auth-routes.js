@@ -38,7 +38,7 @@ router.post('/signup', (req, res, next) => {
         res.status(400).json({ message: err });
       }
       else {
-        const payload = {id: user._id, user: user.email};
+        const payload = {id: user._id, email: user.email};
         const token = jwt.sign(payload, jwtOptions.secretOrKey);
 
         res.status(200).json({ token, user });
@@ -67,7 +67,7 @@ router.post('/login', (req, res, next) => {
         res.status(401).json({ message: 'The email or password is incorrect' });
       }
       else {
-        const payload = {id: user._id, user: user.email};
+        const payload = {id: user._id, email: user.email};
         const token = jwt.sign(payload, jwtOptions.secretOrKey);
 
         res.status(200).json({ token, user });
@@ -76,7 +76,7 @@ router.post('/login', (req, res, next) => {
   });
 });
 
-router.get('/dashboard', passport.authenticate('jwt', { session: false }), (req, res) => {
+router.get('/private', passport.authenticate('jwt', { session: false }), (req, res) => {
   res.json();
 });
 
