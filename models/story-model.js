@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const User = require('./user-model');
 
-const storySchema = new Schema({  
+const storySchema = new Schema({
+  title: String,  
   contents: String,
   mainAuthor: { type: Schema.Types.ObjectId, ref: 'user'},
   time : { type : Date, default: Date.now }
