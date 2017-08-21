@@ -40,7 +40,7 @@ router.post('/login', (req, res, next) => {
   });
 });
 
-router.get('/dashboard', passport.authenticate('jwt', { session: false }), (req, res) => {
+router.get('/stories', passport.authenticate('jwt', { session: false }), (req, res) => {
   res.json();
 });
 
