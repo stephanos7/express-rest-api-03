@@ -15,7 +15,7 @@
     "express": "~4.15.2",
     "express-session": "^1.15.5",
     "jsonwebtoken": "^7.4.2",
-    "mongoose": "^4.11.5",
+    "mongoose": "^6.4.6",
     "morgan": "~1.8.1",
     "nodemon": "^1.11.0",
     "passport": "^0.3.2",
